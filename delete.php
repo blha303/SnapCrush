@@ -8,9 +8,14 @@ set_error_handler(
 if (!isset($_GET['hash'])) {
     header('Location: index.php');
 }
-$url = "https://mediacru.sh/api/".$_GET['hash']."/delete";
+$url = "https://mediacru.sh/api/".$_GET['hash'];
 try {
-    $response = json_decode(file_get_contents($url), true);
+    $context = stream_context_create(array(
+        'http' => array(
+            'method' => 'DELETE'
+        )
+    ));
+    $response = json_decode(file_get_contents($url, false, $context), true);
     if (isset($response['status'])) {
         if ($response['status'] == "success") {
             echo "File deleted successfully.";
